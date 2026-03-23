@@ -1,16 +1,16 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import threading
-import subprocess
 import os
 import json
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # Critical for frozen exe
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import csv
 from dataclasses import dataclass
 
-# ====================== CORE SIMULATION ENGINE ======================
 @dataclass
 class Config:
     preset: str = "marine_propeller"
@@ -120,7 +120,6 @@ class HeliTopSimulator:
             Gamma_list.append(-0.4)
             return filaments, Gamma_list, radius * 2
         else:
-            # generic fallback
             filaments = []
             Gamma_list = []
             for i in range(6):
@@ -142,6 +141,7 @@ class HeliTopSimulator:
         return abs(thrust), abs(torque)
 
     def save_to_vtk(self, filaments, Gamma_list, step):
+        os.makedirs("vtk", exist_ok=True)
         filename = f"vtk/plume_step_{step:04d}.vtk"
         with open(filename, 'w') as f:
             f.write("# vtk DataFile Version 3.0\n")
@@ -204,7 +204,6 @@ class HeliTopSimulator:
             mean_Kt.append(mKt)
             mean_Kq.append(mKq)
             csv_rows.append([r+1, f"{max_E:.4f}", f"{mKt:.4f}", f"{mKq:.4f}", f"{eta:.4f}"])
-        # Save CSV
         with open("propeller_performance.csv", "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerows(csv_rows)
@@ -220,6 +219,7 @@ class HeliTopSimulator:
         plt.savefig('plots/efficiency_curve.png', dpi=300)
         plt.close()
         # PDF Report
+        os.makedirs("reports", exist_ok=True)
         with PdfPages('reports/HeliTop_Propeller_Report.pdf') as pdf:
             plt.figure(figsize=(8,6))
             plt.text(0.5, 0.9, 'HeliTop Vortex v8.0 Report', ha='center', fontsize=16)
@@ -233,7 +233,6 @@ class HeliTopSimulator:
             plt.close()
         return True
 
-# ====================== GUI ======================
 class HeliTopGUI:
     def __init__(self):
         self.root = tk.Tk()
@@ -246,16 +245,13 @@ class HeliTopGUI:
     def create_widgets(self):
         tk.Label(self.root, text="HeliTop Vortex v8.0", font=("Arial", 18, "bold")).pack(pady=10)
         tk.Label(self.root, text="Professional Vortex Filament Simulator", font=("Arial", 12)).pack()
-
         frame = tk.Frame(self.root)
         frame.pack(pady=10, fill="x")
         tk.Label(frame, text="Preset:").pack(side="left", padx=10)
         self.preset_var = tk.StringVar(value=self.config.preset)
         ttk.Combobox(frame, textvariable=self.preset_var, values=["marine_propeller", "aircraft_wake", "generic"], width=20).pack(side="left")
-
         self.run_btn = tk.Button(self.root, text="RUN SIMULATION", font=("Arial", 14, "bold"), bg="#0066cc", fg="white", height=2, command=self.start_simulation)
         self.run_btn.pack(pady=20, fill="x", padx=50)
-
         self.console = tk.Text(self.root, height=15, bg="#111111", fg="#00ff00", font=("Courier", 9))
         self.console.pack(fill="both", padx=20, pady=5)
 
@@ -268,7 +264,6 @@ class HeliTopGUI:
         self.run_btn.config(state="disabled")
         self.console.delete(1.0, tk.END)
         self.log("Starting simulation...")
-
         def run():
             self.config.preset = self.preset_var.get()
             self.sim = HeliTopSimulator(self.config)
@@ -277,7 +272,6 @@ class HeliTopGUI:
             if success:
                 messagebox.showinfo("Success", "All files generated!\nCheck reports/, plots/, and vtk/ folders.")
             self.run_btn.config(state="normal")
-
         threading.Thread(target=run, daemon=True).start()
 
 if __name__ == "__main__":
