@@ -3,7 +3,7 @@
 **A fast, free, GPU-accelerated vortex-filament simulator with an intuitive GUI**  
 Perfect for marine propellers, rocket plumes, aircraft wakes, and general vortex-dynamics studies.
 
-![HeliTop Vortex Screenshot](https://github.com/yourusername/helitop-vortex/raw/main/screenshots/gui-main.png)  
+![HeliTop Vortex Screenshot](https://github.com/yourusername/helitop-vortex/screenshots/gui-main.png)  
 *(Replace with your actual screenshot after uploading)*
 
 Why HeliTop Vortex?
