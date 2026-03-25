@@ -6,7 +6,7 @@ Perfect for marine propellers, rocket plumes, aircraft wakes, and general vortex
 ![HeliTop Vortex Screenshot](https://github.com/yourusername/helitop-vortex/raw/main/screenshots/gui-main.png)  
 *(Replace with your actual screenshot after uploading)*
 
-## ✨ Why HeliTop Vortex?
+Why HeliTop Vortex?
 
 HeliTop Vortex is a **mid-fidelity Lagrangian vortex-filament tool** designed for engineers and researchers who need quick, physically realistic wake simulations **without** the complexity and cost of full CFD.
 
@@ -19,7 +19,7 @@ It combines:
 
 All wrapped in a clean, single-file Windows EXE that runs instantly — **no installation required**.
 
-## 🚀 Features
+Features
 
 - **Modern Tkinter GUI** with live calibration sliders (circulation, core size, viscosity, thrust scale, dynamic amplitude, enstrophy cap)
 - **GPU acceleration** via CuPy (automatic fallback to CPU/NumPy)
@@ -41,7 +41,7 @@ All wrapped in a clean, single-file Windows EXE that runs instantly — **no ins
 - **Dark mode** support
 - **Fully self-contained** single EXE (Windows)
 
-## 📸 Screenshots & Demo
+Screenshots & Demo
 
 *(Upload your best screenshots and GIFs here after creating the repo)*
 
@@ -50,7 +50,7 @@ All wrapped in a clean, single-file Windows EXE that runs instantly — **no ins
 - Rocket Plume thrust profile
 - 3D rotating vortex animation (example GIF)
 
-## 📥 Installation
+Installation
 
 ### Option 1: Windows EXE (Recommended)
 
