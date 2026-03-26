@@ -1,63 +1,33 @@
-# HeliTop Vortex v13.0
+# HeliTop Vortex v15.0
 
-**A fast, free, GPU-accelerated vortex-filament simulator with an intuitive GUI**  
-Perfect for marine propellers, rocket plumes, aircraft wakes, and general vortex-dynamics studies.
+**Fast, free, GPU-accelerated vortex-filament simulator with intuitive GUI**
 
-![HeliTop Vortex Screenshot](https://github.com/yourusername/helitop-vortex/screenshots/gui-main.png)  
-*(Replace with your actual screenshot after uploading)*
+A mid-fidelity Lagrangian vortex method tool designed for quick wake-flow studies in marine propulsion, rocket plumes, aircraft wakes, and confined flows (pipes). Built for engineers who need results in seconds to minutes instead of hours.
 
-Why HeliTop Vortex?
+**Version:** 15.0 (March 2026)  
+**Developed by:** Nathaniel & Grok (xAI)
 
-HeliTop Vortex is a **mid-fidelity Lagrangian vortex-filament tool** designed for engineers and researchers who need quick, physically realistic wake simulations **without** the complexity and cost of full CFD.
+![HeliTop Vortex Screenshot](https://github.com/NWSOREGON85/helitop-vortex/raw/main/screenshots/gui.png)
 
-It combines:
-- Stochastic noise (Navier–Stokes inspired viscosity)
-- Adaptive regridding
-- Topology-aware reconnection
-- Real-time calibration sliders
-- Beautiful 3D rotating GIF animations
+## ✨ Key Features
 
-All wrapped in a clean, single-file Windows EXE that runs instantly — **no installation required**.
+- **Live 3D Preview** – Real-time rotating vortex filaments during simulation
+- **Multiple Engineering Presets** – Marine propeller, rocket plume, aircraft wake, circular pipe, generic
+- **Confinement & Physics** – Cylinder, flat-wall, buoyancy/thermal plumes
+- **GPU Acceleration** – CuPy (CUDA 12.x/13.x) with automatic CPU fallback
+- **Professional Outputs** – 3D rotating GIFs, PDF reports, dynamic CSV performance data, VTK files for ParaView
+- **Built-in Validation Suite** – Vortex ring + leapfrogging rings with conservation checks
+- **Unit Tests** – One-click full system validation
+- **Clean GUI** – Sliders, dark mode, progress bar, console log
+- **JSON Configuration** – Save/load all settings
 
-Features
+## Installation (Windows – Recommended)
 
-- **Modern Tkinter GUI** with live calibration sliders (circulation, core size, viscosity, thrust scale, dynamic amplitude, enstrophy cap)
-- **GPU acceleration** via CuPy (automatic fallback to CPU/NumPy)
-- **Stochastic Lagrangian vortex filaments** with Biot-Savart induction
-- **Adaptive regridding** and **topology-based reconnection**
-- **Built-in presets**:
-  - Marine Propeller
-  - Rocket Plume (with time-varying thrust)
-  - Marine Propeller (High Skew)
-  - Aircraft Wake
-  - Generic (custom rings)
-- **Rich outputs**:
-  - 3D rotating GIF animations (per realization)
-  - Professional PDF reports
-  - VTK files for ParaView
-  - CSV performance data
-  - Efficiency curves (Kt/Kq/η) and thrust profiles
-- **Config persistence** via `config.json`
-- **Dark mode** support
-- **Fully self-contained** single EXE (Windows)
+1. Download the latest release: `HeliTop_Vortex_v15.0.exe`
+2. Run the EXE – **no installation required**
+3. (Optional) Place in any folder; it will create `plots/`, `reports/`, `vtk/`, and `config.json` automatically.
 
-Screenshots & Demo
-
-*(Upload your best screenshots and GIFs here after creating the repo)*
-
-- Main GUI with calibration panel
-- Marine Propeller efficiency curve
-- Rocket Plume thrust profile
-- 3D rotating vortex animation (example GIF)
-
-Installation
-
-### Option 1: Windows EXE (Recommended)
-
-1. Download the latest `HeliTop_Vortex_v13.0.exe` from the [Releases page](https://github.com/yourusername/heli-top-vortex/releases)
-2. Run it — no installation needed
-
-### Option 2: From Source
+### From Source
 
 ```bash
 git clone https://github.com/yourusername/heli-top-vortex.git
