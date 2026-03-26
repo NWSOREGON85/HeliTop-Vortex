@@ -3,7 +3,7 @@ HeliTop Vortex v15.0 - User Manual (Plain Text Version)
 
 Version: 15.0
 Date: March 2026
-Developed by: Nathaniel & Grok (xAI)
+Developed by: Nathaniel
 
 1. INTRODUCTION
 ---------------
@@ -29,7 +29,7 @@ Windows (Recommended - Single EXE):
 - Double-click to run - no installation required
 
 From Source (Advanced):
-- git clone https://github.com/yourusername/heli-top-vortex.git
+- git clone https://github.com/NWSOREGON85/heli-top-vortex.git
 - cd heli-top-vortex
 - pip install numpy matplotlib pillow vtk cupy-cuda12x   (or cupy-cuda13x)
 - python heli_top_gui.py
