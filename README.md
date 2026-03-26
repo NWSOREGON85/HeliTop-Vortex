@@ -5,7 +5,7 @@
 A mid-fidelity Lagrangian vortex method tool designed for quick wake-flow studies in marine propulsion, rocket plumes, aircraft wakes, and confined flows (pipes). Built for engineers who need results in seconds to minutes instead of hours.
 
 **Version:** 15.0 (March 2026)  
-**Developed by:** Nathaniel & Grok (xAI)
+**Developed by:** Nathaniel
 
 ![HeliTop Vortex Screenshot](https://github.com/NWSOREGON85/helitop-vortex/raw/main/screenshots/gui.png)
 
