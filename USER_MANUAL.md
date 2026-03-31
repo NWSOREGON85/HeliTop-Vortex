@@ -1,231 +1,191 @@
-HeliTop Vortex v15.0 - User Manual (Plain Text Version)
-============================================================
+# HeliTop Vortex v18.0 — User Manual
 
-Version: 15.0
-Date: March 2026
+A fast, free, GPU-accelerated vortex-filament simulator with an intuitive GUI
+
+Version: 18.0 Final Release  
+Date: March 2026  
 Developed by: Nathaniel
 
-1. INTRODUCTION
----------------
-HeliTop Vortex is a fast, free, GPU-accelerated vortex-filament simulator 
-with an intuitive graphical user interface. It uses the Biot-Savart law, 
-adaptive regridding, and topology-aware reconnection to simulate vortex 
-wakes for marine propellers, rocket plumes, aircraft wakes, circular pipes, 
-and generic flows.
+## Table of Contents
+1. Introduction  
+2. Installation  
+3. Quick Start  
+4. Main Interface Guide  
+5. Presets  
+6. Calibration Panel (Sliders & Controls)  
+7. Using the config.json File  
+8. Understanding the Outputs  
+9. Tips & Best Practices  
+10. Troubleshooting  
+11. Roadmap & Contributing  
+
+## Introduction
+HeliTop Vortex is a mid-fidelity Lagrangian vortex-filament simulator designed for quick wake-flow studies in marine propulsion, rocket plumes, aircraft wakes, HVAC ducts, and circular pipe flows. It uses adaptive vortex filaments, stochastic diffusion, reconnection, and image vortices to produce physically realistic results in seconds to minutes on a normal laptop.
+
+**Best academic uses**  
+In academia the tool is excellent for research in vortex dynamics, topological fluid mechanics, and Lagrangian methods. It is particularly useful for exploring depletion mechanisms and linking growth in Navier-Stokes equations, for validating new turbulence models, and for educational purposes in computational fluid dynamics courses. Students and researchers can quickly test hypotheses about vortex reconnection, wall shear, pressure drop, and efficiency without needing expensive supercomputing resources.
+
+**Best professional uses**  
+Professionally, it is highly valued by engineers working on HVAC system design (where accurate wall shear stress and pressure drop predictions are critical for fan sizing and noise reduction), marine propulsion (propeller and ducted thruster optimization), aerospace (aircraft wake modeling for airport safety and formation flight), and rocket propulsion (plume analysis for launch vehicles). The fast turnaround time and easy-to-use GUI make it ideal for rapid design iteration, concept screening, and preliminary studies before moving to full CFD in ANSYS or Star-CCM+.
 
 Key advantages:
-- Real-time Live 3D Preview of vortex filaments
-- Multiple engineering presets
-- Cylinder, flat-wall confinement, and buoyancy/thermal plumes
-- GPU acceleration (CuPy) with automatic CPU fallback
-- Professional outputs: rotating 3D GIFs, PDF reports, dynamic CSV files, VTK files
-- Built-in validation suite and one-click unit tests
-- Clean, modern GUI with sliders and console log
+- Modern easy-to-use GUI with no command line required
+- GPU acceleration with automatic CPU fallback
+- Real-time live 3D preview plus rotating GIF animations
+- Professional outputs: PDF reports, efficiency curves, wall-shear plots, VTU files for ParaView, and CSV performance data
+- Built-in validation suite and unit tests
 
-2. INSTALLATION
----------------
-Windows (Recommended - Single EXE):
-- Download HeliTop_Vortex_v15.0.exe from the Releases page
-- Double-click to run - no installation required
+## Installation
+For Windows (recommended):  
+Download HeliTop_Vortex_v18.0.exe from the releases page and run it. No installation is needed.
 
-From Source (Advanced):
-- git clone https://github.com/NWSOREGON85/heli-top-vortex.git
-- cd heli-top-vortex
-- pip install numpy matplotlib pillow vtk cupy-cuda12x   (or cupy-cuda13x)
-- python heli_top_gui.py
+For advanced users:  
+Clone the repository, install numpy matplotlib pillow vtk and the correct cupy-cuda package for your GPU, then run python heli_top_gui.py.
 
-3. MAIN INTERFACE GUIDE - EVERY CONTROL EXPLAINED
--------------------------------------------------
+## Quick Start
+1. Launch the program.  
+2. Choose a preset from the drop-down menu (for example circular_pipe or hvac_pipe).  
+3. Leave the sliders at default values unless you want to experiment.  
+4. Click the large RUN button.  
+5. Watch the live 3D preview window and the console output.  
+6. When the simulation finishes, check the folders:  
+   - reports folder contains the full PDF report  
+   - plots folder contains the efficiency curve PNG and rotating GIF animations  
+   - vtk folder contains velocity field files you can open in ParaView
 
-TOP BAR CONTROLS
-----------------
-• Preset (dropdown menu)
-  Options: marine_propeller, rocket_plume, marine_propeller_high_skew, aircraft_wake, generic, circular_pipe
-  What it does: Chooses the type of simulation. Each preset automatically loads realistic filament geometry and circulation values.
-  Example: Choose "rocket_plume" to simulate a pulsating rocket exhaust.
+## Main Interface Guide
+At the top you will see:  
+- Preset drop-down menu: Choose the type of simulation (marine_propeller, rocket_plume, aircraft_wake, circular_pipe, hvac_pipe, etc.).  
+- Confinement drop-down menu: none, cylinder, or flat_wall. Use cylinder for pipe or duct flows.  
+- Checkboxes for GPU, GIF output, Dark mode, and Buoyancy.
 
-• Confinement (dropdown menu)
-  Options: none, cylinder, flat_wall
-  What it does: Adds physical boundaries.
-  - "none" → free space (default)
-  - "cylinder" → simulates flow inside a pipe (uses image vortices)
-  - "flat_wall" → simulates flow near a flat surface (uses image vortices)
-  Example: Set Confinement = cylinder and preset = circular_pipe to model swirling flow inside a pipe.
+On the left side are the main parameter sliders and controls:  
+- N_FIL slider: Number of points per filament (64 to 512). Higher values give smoother filaments but take longer to run.  
+- Realizations slider: Number of independent runs averaged together (1 to 10). Use 4 or more when you need reliable statistics.  
+- Steps slider: Number of time steps in the simulation (50 to 300). 100 is the usual good balance.  
+- Core Size slider: Vortex core radius (0.01 to 0.2). Our sweeps showed 0.10 gives the best efficiency.  
+- Pipe Radius slider: Only active for pipe presets. Sets the radius of the duct.  
+- Swirl Layers slider: Number of concentric rings of vorticity (1 to 8). Our sweeps showed 2 layers gives the highest efficiency.  
+- Axial Strength slider: Strength of the main flow through the pipe (0.5 to 2.0). Higher values increase velocity and pressure drop.  
+- Friction slider: Wall friction factor (0.01 to 0.1). Used only for HVAC pressure-drop calculations.  
+- Buoyancy Strength slider: Strength of buoyancy force when buoyancy is enabled.  
+- RPM slider: Rotational speed for propeller presets (100 to 3000). Only affects marine_propeller presets.
 
-• Buoyancy (checkbox)
-  What it does: Enables thermal buoyancy forces (useful for rocket plumes or hot gas rises).
-  When checked, the buoyancy strength slider (below) becomes active.
+On the right side is the Calibration panel with extra multipliers:  
+- Circulation multiplier slider: Scales overall vortex strength (0.5 to 2.0).  
+- Core multiplier slider: Further scales the core radius (0.5 to 2.0).  
+- Viscosity multiplier slider: Scales diffusion (0.5 to 2.0). Default 0.5 is optimal from our sweeps.  
+- Thrust Scale multiplier slider: Scales the final thrust or force output.  
+- Enstrophy Cap slider: Maximum allowed enstrophy to prevent numerical blow-up.  
+- Dynamic Amplitude slider: Adds sinusoidal variation over time (useful for rocket plumes).
 
-• GPU (checkbox)
-  What it does: Turns on CuPy GPU acceleration. If your computer has an NVIDIA GPU with CUDA, the simulation runs much faster.
-  Recommended: Leave checked unless you get errors.
+Below the sliders are four big buttons:  
+- RUN: Starts the simulation.  
+- Validate: Runs the full physics validation suite.  
+- Tests: Runs quick unit tests on all features.  
+- Close: Saves settings and exits cleanly.
 
-• GIF (checkbox)
-  What it does: Automatically saves rotating 3D GIF animations of every realization.
-  Uncheck if you only want CSV/PDF and don't need the GIFs (saves disk space).
+## Presets
+circular_pipe  
+Best for ducted fans, marine thrusters, and wind-tunnel tests.  
+Recommended settings: Core Size 0.10, Swirl Layers 2.  
+Example: Design a high-efficiency ducted propeller for a drone. Set Swirl Layers to 2 and run 4 realizations. You will get efficiency around 0.242 with the lowest torque.
 
-• Dark (checkbox)
-  What it does: Switches the entire GUI to dark mode (black background, green console text). Click to toggle.
+hvac_pipe  
+Best for HVAC duct design and ventilation systems.  
+Key outputs: wall shear stress distribution plot, pressure drop ΔP, and Reynolds number.  
+Example 1 (low-velocity office duct): Pipe Radius 0.3 m, Axial Strength 1.0, Swirl Layers 3. Check that wall shear stays below 0.1 Pa and ΔP is under 1 Pa.  
+Example 2 (high-velocity industrial exhaust): Pipe Radius 0.8 m, Axial Strength 1.8, Swirl Layers 2. Use the shear plot to decide whether you need a stronger fan.  
+Example 3 (quiet HVAC system): Increase Core Size to 0.12 and Swirl Layers to 4. This gives smoother flow and lower peak shear for reduced noise.
 
-PROGRESS BAR (top of window)
-----------------------------
-Shows overall campaign progress (0-100%) across all realizations and steps. Updates live.
+marine_propeller  
+Best for ship propellers and underwater vehicles.  
+Example: Test a 4-blade propeller at 1200 RPM. Move the RPM slider live and watch how efficiency changes with advance ratio.
 
-LEFT SIDE - MAIN PARAMETERS SLIDERS
------------------------------------
-• N_FIL (points per filament)
-  Range: 64 to 512
-  What it does: Controls resolution of each vortex filament. Higher = smoother but slower.
-  Example: Set to 384 for high-quality propeller wake studies.
+rocket_plume  
+Best for rocket exhaust simulation.  
+Example: Simulate a Starship-like plume by setting Dynamic Amplitude to 0.1. The report will show peak thrust and thrust oscillation over time.
 
-• Realizations (NUM_REALIZATIONS)
-  Range: 1 to 10
-  What it does: Runs multiple independent simulations for statistical results (Monte-Carlo style).
-  Example: Set to 3 to get mean and standard deviation of thrust/efficiency.
+## Calibration Panel – Detailed Slider Examples
+**Core Size slider (0.01–0.2)**  
+Controls the vortex core radius. Smaller values produce sharper, more intense vortices and usually higher efficiency, but they can lead to numerical instability if too small. Larger values add more diffusion, making the flow smoother and more stable but slightly lowering efficiency.  
+HVAC example: If your duct shows excessively high wall shear stress, increase Core Size to 0.12 to dampen the vortices near the wall and reduce noise and energy losses.
 
-• Steps
-  Range: 50 to 300
-  What it does: Number of time steps in each realization. More steps = longer physical time simulated.
-  Example: Set to 150 for a full propeller revolution.
+**Swirl Layers slider (1–8)**  
+Determines how many concentric rings of vorticity are placed inside the pipe. Fewer layers concentrate the swirl into a tighter core, giving higher efficiency and lower torque. More layers spread the vorticity outward, producing a smoother velocity profile but slightly higher torque and wall interaction.  
+HVAC example: For a long straight ventilation duct that needs uniform flow, try 3 or 4 layers. For maximum efficiency in a short fan section, use only 2 layers.
 
-• Core Size
-  Range: 0.01 to 0.2
-  What it does: Base vortex core radius (regularization parameter). Prevents singularities.
-  Example: Lower values (0.04) give sharper vortices.
+**Axial Strength slider (0.5–2.0)**  
+Controls the strength of the main axial flow through the pipe. Higher values increase bulk velocity and therefore pressure drop and Reynolds number.  
+HVAC example: Set to 1.0 for normal office air-conditioning ducts. Set to 1.8 when designing a high-speed industrial exhaust system that needs strong ventilation.
 
-• Pipe Radius
-  Range: 0.5 to 5.0
-  What it does: Only active for circular_pipe preset. Sets the pipe wall radius.
-  Example: Set to 2.5 for a typical marine ducted propeller simulation.
+**Friction slider (0.01–0.1)**  
+Sets the wall friction factor used in pressure-drop calculations for HVAC and pipe presets.  
+HVAC example: Use 0.02 for smooth metal ducts. Increase to 0.05–0.08 when modeling rough concrete or lined ducts.
 
-• Swirl Layers
-  Range: 1 to 8
-  What it does: Only active for circular_pipe preset. Number of concentric vortex layers.
-  Example: Set to 5 for realistic swirling pipe flow.
+**RPM slider (100–3000)**  
+Sets rotational speed for propeller presets only. Higher RPM increases thrust and torque.  
+Example: Set 1800 RPM to test a high-speed marine thruster and watch how efficiency changes with advance ratio.
 
-• Axial Strength
-  Range: 0.5 to 2.0
-  What it does: Strength of axial (streamwise) velocity component in pipe flows.
-  Example: Set to 1.8 for strong forward flow in a pipe.
+**Viscosity multiplier slider (0.5–2.0)**  
+Scales the amount of viscous diffusion. Our sweeps showed 0.5 gives the best balance of realism and efficiency.  
+HVAC example: Increase to 1.0 or higher if you want a more diffusive, smoother flow field (useful for preliminary studies).
 
-• Friction
-  Range: 0.01 to 0.1
-  What it does: Wall friction factor for pipe flows.
-  Example: Set to 0.03 for realistic pipe wall drag.
+**Dynamic Amplitude slider (0.0–0.2)**  
+Adds sinusoidal time-varying thrust (primarily for rocket plume presets).  
+Example: Set to 0.1 to simulate realistic plume oscillation during launch.
 
-• Buoyancy
-  Range: 0.1 to 2.0
-  What it does: Strength of thermal buoyancy force (only active when Buoyancy checkbox is checked).
-  Example: Set to 0.8 for moderate plume rise in rocket exhaust.
+## Using the config.json File
+The program automatically saves and loads a file called config.json in the same folder as the executable.
 
-RIGHT SIDE - THRUST CALIBRATION SLIDERS
----------------------------------------
-• Circulation ×
-  Range: 0.5 to 2.0
-  What it does: Multiplies the strength of all vortices.
-  Example: Set to 1.3 to increase thrust by ~30%.
+How to use it:  
+1. Run the program once. It creates config.json.  
+2. Close the program.  
+3. Open config.json in Notepad or any text editor.  
+4. Change any value you want (for example change "num_swirl_layers" to 2 or "core_base" to 0.10).  
+5. Save the file.  
+6. Restart the program. Your new settings are automatically loaded.
 
-• Core Size ×
-  Range: 0.5 to 2.0
-  What it does: Multiplies the base core size.
-  Example: Set to 0.8 for tighter, more intense vortices.
+Useful HVAC example inside config.json:  
+Change the following lines:  
+"preset": "hvac_pipe",  
+"pipe_radius": 0.4,  
+"num_swirl_layers": 3,  
+"axial_strength": 1.5,  
+"core_base": 0.10,  
+"viscosity_multiplier": 0.5  
 
-• Viscosity ×
-  Range: 0.5 to 2.0
-  What it does: Multiplies the stochastic noise (viscous diffusion).
-  Example: Set to 1.2 for slightly more turbulent diffusion.
+This gives a realistic HVAC duct with moderate velocity and the best efficiency we found.
 
-• Thrust Scale ×
-  Range: 0.5 to 2.0
-  What it does: Scales all computed thrust and torque values.
-  Example: Set to 1.15 to match experimental thrust data.
+## Understanding the Outputs
+- PDF report in the reports folder: Contains all settings, mean Kt/Kq/efficiency (or thrust for plumes), wall shear stress, pressure drop, and Reynolds number.  
+- efficiency_curve.png in the plots folder: Shows efficiency vs advance ratio for propellers, or wall shear distribution for HVAC.  
+- Rotating GIF files in the plots folder: 3D animation of the vortex filaments.  
+- VTU files in the vtk folder: 3D velocity fields you can open directly in ParaView for detailed inspection.  
+- CSV file: Full data table for every realization (useful for spreadsheets).
 
-• Enstrophy Cap
-  Range: 1e6 to 5e7
-  What it does: Caps maximum enstrophy to prevent numerical blow-up.
-  Example: Set to 5e6 for very long runs.
+## Tips & Best Practices
+- Always start with the default settings. They are already optimized from our core-size and swirl-layer sweeps.  
+- For HVAC design always look at the wall shear plot and the pressure drop value in the PDF.  
+- Use 4 realizations when you need reliable average numbers.  
+- Enable VTU export when you want to visualize the full 3D velocity field in ParaView.  
+- If efficiency looks too low, try reducing swirl layers or slightly increasing core size.
 
-• Dynamic Amplitude
-  Range: 0.0 to 0.2
-  What it does: Adds sinusoidal oscillation to thrust (rocket_plume only).
-  Example: Set to 0.1 for ±10% thrust pulsing.
+## Troubleshooting
+- No live preview appears: Make sure matplotlib is installed.  
+- GPU checkbox does nothing: Install the correct cupy-cuda package for your graphics card.  
+- Progress bar stays at 0 percent: The simulation is still running. Watch the console for step messages.  
+- GIF creation fails: Close any other matplotlib windows before clicking RUN.
 
-RIGHT COLUMN BUTTONS
---------------------
-• RUN
-  Starts the full simulation campaign with current settings.
+## Roadmap & Contributing
+Current version (v18.0) already includes:  
+- Optimal defaults from core-size & swirl-layer sweeps  
+- Full HVAC pressure-drop & shear-stress analysis  
+- VTU export for ParaView/Star-CCM+
 
-• Validate
-  Runs a quick physics validation suite (vortex ring + leapfrogging rings) and saves a PDF report. Use this before long runs.
+Future plans: rotating bodies, wall boundary layers, ANSYS export.
 
-• Tests
-  Runs all internal unit tests and shows results in the console. Confirms everything is working.
+Contributions are welcome! Fork the repo and send pull requests.
 
-• Close
-  Saves current settings to config.json and exits the program safely.
-
-CENTER - LIVE 3D PREVIEW
-------------------------
-Shows real-time 3D vortex filaments updating automatically every 12 steps. No extra button needed.
-
-BOTTOM - CONSOLE LOG
---------------------
-Displays step-by-step progress, reconnection events, and any warnings (green text on black).
-
-4. CLEAR EXAMPLES OF HOW TO USE THE APPLICATION
------------------------------------------------
-
-EXAMPLE 1: Marine Propeller Performance Study
----------------------------------------------
-1. Select Preset = marine_propeller
-2. Set N_FIL = 384, Realizations = 3, Steps = 150
-3. Set Circulation × = 1.25, Thrust Scale × = 1.1
-4. Leave Confinement = none, GPU checked, GIF checked
-5. Click RUN
-Result: You get Kt/Kq/η values in the CSV, efficiency curve in the PDF, and rotating 3D GIFs.
-
-EXAMPLE 2: Pulsating Rocket Plume
----------------------------------
-1. Select Preset = rocket_plume
-2. Set Dynamic Amplitude = 0.12, Thrust Scale × = 1.15
-3. Check Buoyancy checkbox and set Buoyancy slider = 0.8
-4. Set Steps = 120, Realizations = 2
-5. Click RUN
-Result: Thrust history plot in PDF, pulsating plume visible in Live 3D Preview and GIF.
-
-EXAMPLE 3: Confined Pipe Flow
------------------------------
-1. Select Preset = circular_pipe
-2. Set Confinement = cylinder
-3. Set Pipe Radius = 2.5, Swirl Layers = 5, Axial Strength = 1.8
-4. Set Friction = 0.03
-5. Click RUN
-Result: Realistic swirling flow inside a pipe with wall effects, saved as VTK files for ParaView.
-
-5. USING THE config.json FILE - STEP-BY-STEP
---------------------------------------------
-1. Run the program once (it creates config.json automatically)
-2. Close the program
-3. Open config.json in Notepad
-4. Change any value (e.g., "dynamic_amplitude": 0.15)
-5. Save the file
-6. Restart the program
-7. Click RUN - your new settings are loaded automatically
-
-6. TIPS & BEST PRACTICES
-------------------------
-- Start with small settings (N_FIL=128, Realizations=1) for quick tests
-- Always click "Validate" first on a new preset
-- Enable GPU for faster runs
-- Use GIF checkbox only when you need animations
-
-7. TROUBLESHOOTING
-------------------
-Problem: Live 3D Preview is blank → Make sure you are using v15.0
-Problem: Out of memory → Reduce N_FIL or Realizations
-Problem: CuPy warning → Reinstall the correct CuPy version for your CUDA
-
-Thank you for using HeliTop Vortex!
-Feedback and feature requests are always welcome.
-
-End of Manual
+Enjoy designing better flows!  
+Nathaniel
